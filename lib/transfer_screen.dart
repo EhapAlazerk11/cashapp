@@ -1,11 +1,12 @@
-import 'package:cashapp/contacts_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ussd_advanced/ussd_advanced.dart';
 
+import 'contact_response.dart';
+
 class TransferScreen extends StatelessWidget {
-  ContactsModel mData;
+  ContactsModelList mData;
   final _amountController = TextEditingController();
 
   TransferScreen(this.mData, {Key? key}) : super(key: key);

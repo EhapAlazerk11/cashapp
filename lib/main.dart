@@ -1,12 +1,13 @@
 import 'dart:io';
 
-import 'package:cashapp/contacts_model.dart';
 import 'package:cashapp/hive_helper.dart';
+import 'package:cashapp/transfer_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'contact_response.dart';
 import 'custom_dialog.dart';
 
 Future<void> main() async {
@@ -16,7 +17,6 @@ Future<void> main() async {
 
   await Hive.initFlutter();
 
-  Hive.registerAdapter(ContactsModelAdapter());
 
   await Hive.openBox(HiveHelper.keyBoxPhones);
   await Hive.openBox("box");
@@ -84,7 +84,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late List<ContactsModel> mData = [];
+  late List<ContactsModelList> mData = [];
 
   @override
   void initState() {
@@ -94,7 +94,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // mData.addAll(HiveHelper.getContacts());
+    if (HiveHelper.getContacts().contactsModelList != null) {
+      mData.addAll(HiveHelper.getContacts().contactsModelList!);
+    }
   }
 
   @override
@@ -103,58 +105,53 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: const Text('CashApp'),
       ),
-      body: Container()
-
-      // mData.isNotEmpty
-      //     ? ListView.builder(
-      //         shrinkWrap: true,
-      //         physics: const NeverScrollableScrollPhysics(),
-      //         itemCount: mData.length,
-      //         itemBuilder: (context, index) {
-      //           return GestureDetector(
-      //             onTap: () {
-      //               Navigator.push(
-      //                   context,
-      //                   MaterialPageRoute(
-      //                       builder: (context) =>
-      //                           TransferScreen(mData[index])));
-      //             },
-      //             child: Card(
-      //               elevation: 8,
-      //               child: Container(
-      //                 padding: const EdgeInsets.all(16),
-      //                 child: Row(
-      //                   children: [
-      //                     Text(
-      //                       mData[index].name,
-      //                       style: TextStyle(
-      //                           fontSize: 18,
-      //                           color: Theme.of(context).primaryColor),
-      //                     ),
-      //                   ],
-      //                 ),
-      //               ),
-      //             ),
-      //           );
-      //         },
-      //       )
-      //     : const Center(
-      //         child: CircularProgressIndicator(),
-      //       )
-
-      ,
+      body: mData.isNotEmpty
+          ? ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: mData.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                TransferScreen(mData[index])));
+                  },
+                  child: Card(
+                    elevation: 8,
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          Text(
+                            mData[index].name!,
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: Theme.of(context).primaryColor),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            )
+          : const Center(
+              child: CircularProgressIndicator(),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          // Hive.box("box").put("box", Hive.box("box").get("box") + 1);
-          // print(Hive.box("box").get("box").toString());
-
           showDialog(
             barrierDismissible: true,
             context: context,
             builder: (BuildContext context) => CustomDialog(
               onClick: () {
                 setState(() {
-                  mData.addAll(HiveHelper.getContacts());
+                  if (HiveHelper.getContacts().contactsModelList != null) {
+                    mData.addAll(HiveHelper.getContacts().contactsModelList!.toList());
+                  }
                 });
               },
             ),

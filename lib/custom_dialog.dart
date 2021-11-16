@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'contacts_model.dart';
-import 'hive_helper.dart';
+import 'contact_response.dart';
+ import 'hive_helper.dart';
 
 class CustomDialog extends StatelessWidget {
   final _phoneNumberController = TextEditingController();
@@ -48,7 +46,7 @@ class CustomDialog extends StatelessWidget {
             ],
           ),
           child: Column(
-            mainAxisSize: MainAxisSize.min, // To make the card compact
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextFormField(
                 controller: _nameController,
@@ -99,18 +97,23 @@ class CustomDialog extends StatelessWidget {
                 height: 16,
               ),
               MaterialButton(
-                onPressed: ()  {
-                  // var n = Hive.box("box").get("box");
-                  // Hive.box("box").put("box", n++);
-                  ContactsModel model = ContactsModel(
-                      _nameController.text, _phoneNumberController.text);
+                onPressed: () {
+                  ContactsModelList model = ContactsModelList(
+                      name: _nameController.text,
+                      phone: _phoneNumberController.text);
 
-                  List<ContactsModel> modelsList = [];
-                  modelsList.addAll(HiveHelper.getContacts());
+                  List<ContactsModelList> modelsList = [];
+                  if (HiveHelper.getContacts().contactsModelList != null) {
+                    modelsList
+                        .addAll(HiveHelper.getContacts().contactsModelList!);
+                  }
 
                   modelsList.add(model);
 
-                  HiveHelper.addContacts(jsonEncode(modelsList));
+                  ContactResponse mContactResponse =
+                      ContactResponse(contactsModelList: modelsList);
+
+                  HiveHelper.addContacts(mContactResponse);
 
                   Navigator.pop(context);
                   onClick!.call();

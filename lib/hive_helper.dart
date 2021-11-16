@@ -1,23 +1,20 @@
-import 'dart:convert';
 
 import 'package:hive/hive.dart';
 
-import 'contacts_model.dart';
+import 'contact_response.dart';
 
 class HiveHelper {
   static String keyBoxPhones = "keyBoxPhones";
 
-  static void addContacts(String models) {
-    Hive.box(keyBoxPhones).put(keyBoxPhones, models);
+  static void addContacts(ContactResponse response) {
+    Hive.box(keyBoxPhones).put(keyBoxPhones, response.toJson());
   }
 
-  static List<ContactsModel> getContacts() {
+  static ContactResponse getContacts() {
     if (Hive.box(keyBoxPhones).isNotEmpty) {
-      return List<ContactsModel>.from(json
-          .decode(Hive.box(keyBoxPhones).get(keyBoxPhones))
-          .map((model) => ContactsModel.fromJson(model)));
+      return ContactResponse.fromJson(Hive.box(keyBoxPhones).get(keyBoxPhones));
     } else {
-      return [];
+      return ContactResponse();
     }
   }
 }
