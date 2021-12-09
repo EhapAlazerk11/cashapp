@@ -17,9 +17,7 @@ Future<void> main() async {
 
   await Hive.initFlutter();
 
-
   await Hive.openBox(HiveHelper.keyBoxPhones);
-  await Hive.openBox("box");
 
   runApp(const MyApp());
 }
@@ -27,7 +25,6 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -89,18 +86,27 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+      if (HiveHelper.getContacts().contactsModelList != null) {
+
+         mData=HiveHelper.getContacts().contactsModelList!;
+      }
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (HiveHelper.getContacts().contactsModelList != null) {
-      mData.addAll(HiveHelper.getContacts().contactsModelList!);
-    }
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   if (HiveHelper.getContacts().contactsModelList != null) {
+  //
+  //      mData=HiveHelper.getContacts().contactsModelList!;
+  //   }
+  //   setState(() {
+  //
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
+    // mData=HiveHelper.getContacts().contactsModelList!;
     return Scaffold(
       appBar: AppBar(
         title: const Text('CashApp'),
@@ -147,10 +153,11 @@ class _MyHomePageState extends State<MyHomePage> {
             barrierDismissible: true,
             context: context,
             builder: (BuildContext context) => CustomDialog(
+
               onClick: () {
                 setState(() {
                   if (HiveHelper.getContacts().contactsModelList != null) {
-                    mData.addAll(HiveHelper.getContacts().contactsModelList!.toList());
+                     mData  = HiveHelper.getContacts().contactsModelList!.toList();
                   }
                 });
               },
@@ -159,7 +166,7 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hive/hive.dart';
 
 import 'contact_response.dart';
- import 'hive_helper.dart';
+import 'hive_helper.dart';
 
 class CustomDialog extends StatelessWidget {
   final _phoneNumberController = TextEditingController();
@@ -104,8 +105,9 @@ class CustomDialog extends StatelessWidget {
 
                   List<ContactsModelList> modelsList = [];
                   if (HiveHelper.getContacts().contactsModelList != null) {
-                    modelsList
-                        .addAll(HiveHelper.getContacts().contactsModelList!);
+                    modelsList=
+                        HiveHelper.getContacts().contactsModelList!;
+                    // Hive.box(HiveHelper.keyBoxPhones).clear();
                   }
 
                   modelsList.add(model);
@@ -117,6 +119,7 @@ class CustomDialog extends StatelessWidget {
 
                   Navigator.pop(context);
                   onClick!.call();
+
                 },
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),
